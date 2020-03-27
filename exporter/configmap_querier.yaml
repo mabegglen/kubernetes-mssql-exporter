@@ -1,25 +1,86 @@
+---
+# Queries inspired by https://github.com/tmatias/prometheus-mssql-exporter/tree/more_metrics
 apiVersion: v1
 data:
-  queries.json: |+
-    {
-        "Queries": [
-            {
-                "Name": "mssql_deadlocks",
-                "Query": "SELECT cntr_value FROM sys.dm_os_performance_counters where counter_name = 'Number of Deadlocks/sec' AND instance_name = '_Total'",
-                "Description": "Number of lock requests per second that resulted in a deadlock since last restart",
-                "Columns": [
-                    {
-                        "Name": "cntr_value",
-                        "Label": "mssql_deadlocks",
-                        "Usage": "Gauge",
-                        "DefaultValue": 0
-                    }
-                ]
-            }
-        ],
-        "MillisecondTimeout": 4000
-    }
-
+    queries.json: |+
+        {
+            "Queries": [
+                {
+                    "Name": "mssql_sql_recompilations",
+                    "Query": "SELECT cntr_value FROM sys.dm_os_performance_counters where counter_name = 'SQL Re-Compilations/sec'",
+                    "Description": "Number of lock requests per second that resulted in a deadlock since last restart",
+                    "Columns": [
+                        {
+                            "Name": "cntr_value",
+                            "Label": "mssql_sql_recompilations",
+                            "Usage": "Gauge",
+                            "DefaultValue": 0
+                        }
+                    ]
+                }, {
+                    "Name": "mssql_sql_compilations",
+                    "Query": "SELECT cntr_value FROM sys.dm_os_performance_counters where counter_name = 'SQL Compilations/sec'",
+                    "Description": "Number of SQL compilations per second",
+                    "Columns": [
+                        {
+                            "Name": "cntr_value",
+                            "Label": "mssql_sql_compilations",
+                            "Usage": "Gauge",
+                            "DefaultValue": 0
+                        }
+                    ]
+                }, {
+                    "Name": "mssql_buffer_cache_hit_ratio",
+                    "Query": "SELECT cntr_value FROM sys.dm_os_performance_counters where counter_name = 'Buffer cache hit ratio'",
+                    "Description": "Indicates the percentage of pages found in the buffer cache without having to read from disk",
+                    "Columns": [
+                        {
+                            "Name": "cntr_value",
+                            "Label": "mssql_buffer_cache_hit_ratio",
+                            "Usage": "Gauge",
+                            "DefaultValue": 0
+                        }
+                    ]
+                }, {
+                    "Name": "mssql_checkpoint_pages",
+                    "Query": "SELECT cntr_value FROM sys.dm_os_performance_counters where counter_name = 'Checkpoint pages/sec'",
+                    "Description": "Indicates the number of pages flushed to disk per second by a checkpoint or other operation that require all dirty pages to be flushed",
+                    "Columns": [
+                        {
+                            "Name": "cntr_value",
+                            "Label": "mssql_checkpoint_pages",
+                            "Usage": "Gauge",
+                            "DefaultValue": 0
+                        }
+                    ]
+                }, {
+                    "Name": "mssql_lock_waits",
+                    "Query": "SELECT cntr_value FROM sys.dm_os_performance_counters where counter_name = 'Lock waits/sec' and instance_name = '_Total'",
+                    "Description": "Number of lock requests per second that required the caller to wait",
+                    "Columns": [
+                        {
+                            "Name": "cntr_value",
+                            "Label": "mssql_lock_waits",
+                            "Usage": "Gauge",
+                            "DefaultValue": 0
+                        }
+                    ]
+                }, {
+                    "Name": "mssql_page_splits",
+                    "Query": "SELECT cntr_value FROM sys.dm_os_performance_counters where counter_name = 'Page Splits/sec'",
+                    "Description": "Number of page splits per second that occur as the result of overflowing index pages",
+                    "Columns": [
+                        {
+                            "Name": "cntr_value",
+                            "Label": "mssql_page_splits",
+                            "Usage": "Gauge",
+                            "DefaultValue": 0
+                        }
+                    ]
+                }
+            ],
+            "MillisecondTimeout": 4000
+        }
 kind: ConfigMap
 metadata:
-  name: mssql-custom-queries
+    name: mssql-custom-queries
