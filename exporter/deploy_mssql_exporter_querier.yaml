@@ -1,0 +1,60 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: mssql-exporter-querier
+  labels:
+    app: mssql-exporter-querier
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: mssql-exporter-querier
+  template:
+    metadata:
+      labels:
+        app: mssql-exporter-querier
+    spec:
+      containers:
+        - name: mssql-exporter
+          image: danieloliver/mssql_exporter:latest
+          env:
+            - name: PROMETHEUS_MSSQL_DataSource
+              valueFrom:
+                secretKeyRef:
+                  name: mssql-connectionstring
+                  key: ConnectionString
+            - name: PROMETHEUS_MSSQL_ConfigFile
+              value: "metrics.json"
+            - name: PROMETHEUS_MSSQL_ServerPath
+              value: "metrics"
+            - name: PROMETHEUS_MSSQL_ServerPort
+              value: "8000"
+            - name: PROMETHEUS_MSSQL_LogLevel
+              value: "Debug"
+            - name: PROMETHEUS_MSSQL_AddExporterMetrics
+              value: "false"
+            - name: PROMETHEUS_MSSQL_ConfigText
+              value: |
+                {
+                    "Queries": [
+                        {
+                            "Name": "mssql_deadlocks",
+                            "Query": "SELECT cntr_value FROM sys.dm_os_performance_counters where counter_name = 'Number of Deadlocks/sec' AND instance_name = '_Total'",
+                            "Description": "Number of lock requests per second that resulted in a deadlock since last restart",
+                            "Columns": [
+                                {
+                                    "Name": "cntr_value",
+                                    "Label": "mssql_deadlocks",
+                                    "Usage": "Gauge",
+                                    "DefaultValue": 0
+                                }
+                            ]
+                        }
+                    ],
+                    "MillisecondTimeout": 4000
+                }
+          ports:
+            - name: mssqlexporter
+              containerPort: 8000

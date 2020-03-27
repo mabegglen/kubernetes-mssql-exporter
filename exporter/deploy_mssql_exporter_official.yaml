@@ -1,0 +1,47 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: mssql-exporter-official
+  labels:
+    app: mssql-exporter-official
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: mssql-exporter-official
+  template:
+    metadata:
+      labels:
+        app: mssql-exporter-official
+    spec:
+      containers:
+        - name: mssql-exporter
+          image: awaragi/prometheus-mssql-exporter:latest
+          env:
+            - name: SERVER
+              valueFrom:
+                secretKeyRef:
+                  name: mssql-credentials
+                  key: server
+            - name: PORT
+              valueFrom:
+                secretKeyRef:
+                  name: mssql-credentials
+                  key: port
+            - name: USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: mssql-credentials
+                  key: username
+            - name: PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mssql-credentials
+                  key: password
+            - name: DEBUG
+              value: "app" 
+          ports:
+            - name: mssqlexporter
+              containerPort: 4000
