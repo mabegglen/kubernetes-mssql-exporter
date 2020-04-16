@@ -33,19 +33,22 @@ curl localhost:4000/metrics
 
 ## Add ServiceMonitor
 
+Prometheus setup: <https://github.com/helm/charts/tree/master/stable/prometheus-operator>
+
 ```bash
 NAMESPACE=
 kubectl -n ${NAMESPACE} apply -f servicemonitor.yaml
 ```
 
-## Grafana Dashboard
+## Add Grafana Dashboard
 
+Grafana Setup: <https://github.com/helm/charts/tree/master/stable/grafana>
+
+Dashboard based on:
 <https://grafana.com/grafana/dashboards/9336>
 
-Fix job template:
+Deploy modified dashboard:
 
 ```bash
-/job="(.*?)"/
-=>
-/job="(mssql-exporter-official.*?)"/
+kubectl -n ${NAMESPACE} apply -f prometheus_mssql_dashboard.yaml
 ```
