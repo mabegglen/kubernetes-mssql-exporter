@@ -7,6 +7,11 @@ Following exporters will be deployed:
 - <https://github.com/awaragi/prometheus-mssql-exporter>
 - <https://github.com/DanielOliver/mssql_exporter>
 
+![setup](setup.png)
+
+[1] [generic metrics](https://github.com/mabegglen/kubernetes-mssql-exporter/blob/master/exporter/configmap_querier.yaml#L7)
+[2] [custom metrics](https://github.com/awaragi/prometheus-mssql-exporter/blob/master/metrics.js)
+
 ## Deploy
 
 ```bash
